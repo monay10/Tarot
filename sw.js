@@ -1,11 +1,12 @@
 /* Mistik Tarot — service worker
    App shell cached at install; runtime cache-first with network refresh. */
-const CACHE = "mistik-tarot-v1";
+const CACHE = "mistik-tarot-v2";
 const ASSETS = [
   "./",
   "./index.html",
   "./css/style.css",
   "./js/tarot-data.js",
+  "./js/tarot-oracle.js",
   "./js/tarot.js",
   "./manifest.webmanifest",
   "./icons/icon.svg",

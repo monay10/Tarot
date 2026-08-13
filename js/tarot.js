@@ -121,6 +121,7 @@
 
     updatePrompt();
     updateStreakBadge();
+    $("oracle-q").placeholder = dict.oracleHint;
     if (state.finished) renderResults(false);
     if ($("journal-screen").classList.contains("active")) renderJournal();
   }
@@ -408,6 +409,12 @@
     });
 
     renderResults(true);
+    // oracle panel: fresh state for the new draw
+    const oraclePanel = $("oracle-panel");
+    oraclePanel.classList.remove("hidden");
+    $("oracle-out").textContent = "";
+    $("oracle-btn").textContent = UI[state.lang].oracleGo;
+    gsap.fromTo(oraclePanel, { opacity: 0 }, { opacity: 1, duration: 0.5, delay: 0.5 });
     actionsEl.classList.remove("hidden");
     gsap.fromTo(actionsEl, { opacity: 0 }, { opacity: 1, duration: 0.5, delay: 0.6 });
 
@@ -811,6 +818,7 @@
 
     resultsEl.innerHTML = "";
     actionsEl.classList.add("hidden");
+    $("oracle-panel").classList.add("hidden");
     buildSlots();
     updatePrompt();
     showScreen(tableScreen);
@@ -826,6 +834,37 @@
   $("journal-back-btn").addEventListener("click", () => showScreen(menuScreen));
   $("again-btn").addEventListener("click", () => startDraw(state.spread));
   $("share-btn").addEventListener("click", shareResult);
+
+  // ── oracle (local personal reading) ─────
+  let twTimer = null;
+  function typewrite(el, text) {
+    clearInterval(twTimer);
+    el.textContent = "";
+    el.classList.add("typing");
+    let i = 0;
+    twTimer = setInterval(() => {
+      i += 2;
+      el.textContent = text.slice(0, i);
+      if (i >= text.length) {
+        clearInterval(twTimer);
+        el.classList.remove("typing");
+      }
+    }, 16);
+  }
+
+  $("oracle-btn").addEventListener("click", () => {
+    if (!state.finished) return;
+    const text = TarotOracle.generate({
+      question: $("oracle-q").value.trim(),
+      lang: state.lang,
+      spread: state.spread,
+      posKeys: state.posKeys,
+      picks: state.picks
+    });
+    typewrite($("oracle-out"), text);
+    $("oracle-btn").textContent = UI[state.lang].oracleAgain;
+    chime();
+  });
 
   document.querySelectorAll(".spread-card").forEach((btn) => {
     btn.addEventListener("click", () => startDraw(btn.dataset.spread));

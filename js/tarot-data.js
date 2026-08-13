@@ -50,7 +50,11 @@ const UI = {
     statMonth: "Bu Ay",
     statTop: "Ayın Kartı",
     clearJournal: "Günlüğü Temizle",
-    clearConfirm: "Emin misin?"
+    clearConfirm: "Emin misin?",
+    oracleTitle: "Kişisel Yorum",
+    oracleHint: "Sorunu yaz (isteğe bağlı)…",
+    oracleGo: "Yorumla",
+    oracleAgain: "Yeniden Yorumla"
   },
   en: {
     title: "Mystic Tarot",
@@ -95,7 +99,11 @@ const UI = {
     statMonth: "This Month",
     statTop: "Card of the Month",
     clearJournal: "Clear Journal",
-    clearConfirm: "Are you sure?"
+    clearConfirm: "Are you sure?",
+    oracleTitle: "Personal Reading",
+    oracleHint: "Type your question (optional)…",
+    oracleGo: "Interpret",
+    oracleAgain: "Interpret Again"
   }
 };
 
