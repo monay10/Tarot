@@ -1,0 +1,13 @@
+{
+  "appId": "io.github.monay10.mistiktarot",
+  "appName": "Mistik Tarot",
+  "webDir": "www",
+  "backgroundColor": "#0b0716",
+  "android": {
+    "backgroundColor": "#0b0716",
+    "allowMixedContent": false
+  },
+  "server": {
+    "androidScheme": "https"
+  }
+}

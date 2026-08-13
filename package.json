@@ -1,0 +1,24 @@
+{
+  "name": "mistik-tarot",
+  "version": "1.0.0",
+  "description": "Mistik Tarot — günlük kart, üç kart, evet/hayır ve aşk açılımları (TR/EN)",
+  "private": true,
+  "scripts": {
+    "build:www": "node scripts/build-www.js",
+    "sync": "npm run build:www && npx cap sync android",
+    "open:android": "npx cap open android"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/monay10/Tarot.git"
+  },
+  "author": "monay10",
+  "license": "MIT",
+  "type": "commonjs",
+  "homepage": "https://monay10.github.io/Tarot/",
+  "dependencies": {
+    "@capacitor/android": "^8.5.0",
+    "@capacitor/cli": "^8.5.0",
+    "@capacitor/core": "^8.5.0"
+  }
+}
