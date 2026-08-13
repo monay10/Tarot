@@ -42,7 +42,15 @@ const UI = {
     reversed: "Ters",
     again: "Tekrar Çek",
     share: "Görseli Paylaş",
-    backMenu: "Açılımlar"
+    backMenu: "Açılımlar",
+    journal: "Fal Günlüğü",
+    journalEmpty: "Henüz kayıtlı falın yok — ilk kartını çek!",
+    streak: "{n} günlük seri",
+    statStreak: "Seri",
+    statMonth: "Bu Ay",
+    statTop: "Ayın Kartı",
+    clearJournal: "Günlüğü Temizle",
+    clearConfirm: "Emin misin?"
   },
   en: {
     title: "Mystic Tarot",
@@ -79,7 +87,15 @@ const UI = {
     reversed: "Reversed",
     again: "Draw Again",
     share: "Share Image",
-    backMenu: "Spreads"
+    backMenu: "Spreads",
+    journal: "Tarot Journal",
+    journalEmpty: "No readings saved yet — draw your first card!",
+    streak: "{n}-day streak",
+    statStreak: "Streak",
+    statMonth: "This Month",
+    statTop: "Card of the Month",
+    clearJournal: "Clear Journal",
+    clearConfirm: "Are you sure?"
   }
 };
 

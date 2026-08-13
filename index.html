@@ -35,6 +35,7 @@
     <h1 class="site-title" data-i18n="title">Mistik Tarot</h1>
     <p class="tagline" data-i18n="tagline"></p>
     <button id="start-btn" class="btn-primary" data-i18n="start"></button>
+    <div id="streak-badge" class="streak-badge hidden">🔥 <span id="streak-text"></span></div>
     <p class="disclaimer" data-i18n="disclaimer"></p>
   </section>
 
@@ -78,6 +79,18 @@
         <p data-i18n="loveDesc"></p>
       </button>
     </div>
+    <button id="journal-btn" class="btn-ghost journal-btn">📖 <span data-i18n="journal"></span></button>
+  </section>
+
+  <!-- ═══════════ JOURNAL ═══════════ -->
+  <section id="journal-screen" class="screen">
+    <header class="draw-header">
+      <button id="journal-back-btn" class="btn-back" aria-label="Back">←</button>
+      <p class="draw-prompt" data-i18n="journal"></p>
+    </header>
+    <div id="journal-stats" class="journal-stats"></div>
+    <div id="journal-list" class="journal-list"></div>
+    <button id="journal-clear-btn" class="btn-ghost journal-clear hidden" data-i18n="clearJournal"></button>
   </section>
 
   <!-- ═══════════ TABLE (draw + results) ═══════════ -->

@@ -120,7 +120,9 @@
     });
 
     updatePrompt();
+    updateStreakBadge();
     if (state.finished) renderResults(false);
+    if ($("journal-screen").classList.contains("active")) renderJournal();
   }
 
   langToggle.addEventListener("click", () => {
@@ -395,6 +397,8 @@
   function finishDraw() {
     state.finished = true;
     updatePrompt();
+    saveJournalEntry();
+    updateStreakBadge();
 
     // sweep away the rest of the fan
     gsap.to(state.fanCards, {
@@ -468,6 +472,122 @@
       gsap.set(panels, { opacity: 1 });
     }
   }
+
+  // ── journal & streak ────────────────────
+  const JOURNAL_KEY = "tarot-journal";
+
+  function dayKey(dt) {
+    return dt.getFullYear() + "-" +
+      String(dt.getMonth() + 1).padStart(2, "0") + "-" +
+      String(dt.getDate()).padStart(2, "0");
+  }
+
+  function loadJournal() {
+    try { return JSON.parse(storeGet(JOURNAL_KEY)) || []; } catch (e) { return []; }
+  }
+
+  function saveJournalEntry() {
+    const list = loadJournal();
+    list.push({
+      d: dayKey(new Date()),
+      t: Date.now(),
+      s: state.spread,
+      p: state.picks.map((p) => ({ c: p.cardId, r: p.reversed }))
+    });
+    while (list.length > 200) list.shift(); // keep the journal bounded
+    storeSet(JOURNAL_KEY, JSON.stringify(list));
+  }
+
+  function calcStreak() {
+    const days = new Set(loadJournal().map((e) => e.d));
+    const cursor = new Date();
+    if (!days.has(dayKey(cursor))) cursor.setDate(cursor.getDate() - 1); // today not drawn yet → count up to yesterday
+    let streak = 0;
+    while (days.has(dayKey(cursor))) {
+      streak++;
+      cursor.setDate(cursor.getDate() - 1);
+    }
+    return streak;
+  }
+
+  function updateStreakBadge() {
+    const badge = $("streak-badge");
+    const s = calcStreak();
+    if (s >= 1) {
+      badge.classList.remove("hidden");
+      $("streak-text").textContent = UI[state.lang].streak.replace("{n}", s);
+    } else {
+      badge.classList.add("hidden");
+    }
+  }
+
+  function renderJournal() {
+    const dict = UI[state.lang];
+    const entries = loadJournal().slice().reverse();
+    const statsEl = $("journal-stats");
+    const listEl = $("journal-list");
+    const clearBtn = $("journal-clear-btn");
+
+    if (!entries.length) {
+      statsEl.innerHTML = "";
+      listEl.innerHTML = '<p class="journal-empty">' + dict.journalEmpty + "</p>";
+      clearBtn.classList.add("hidden");
+      return;
+    }
+    clearBtn.classList.remove("hidden");
+
+    // stats
+    const now = new Date();
+    const monthPrefix = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0");
+    const monthEntries = entries.filter((e) => e.d.indexOf(monthPrefix) === 0);
+    const counts = {};
+    monthEntries.forEach((e) => e.p.forEach((p) => { counts[p.c] = (counts[p.c] || 0) + 1; }));
+    let topCard = null, topN = 0;
+    Object.keys(counts).forEach((c) => { if (counts[c] > topN) { topN = counts[c]; topCard = Number(c); } });
+
+    const tile = (big, label) =>
+      '<div class="stat-tile"><span class="stat-big">' + big + '</span><span class="stat-label">' + label + "</span></div>";
+    statsEl.innerHTML =
+      tile("🔥 " + calcStreak(), dict.statStreak) +
+      tile(String(monthEntries.length), dict.statMonth) +
+      (topCard !== null ? tile(TAROT_CARDS[topCard].name[state.lang], dict.statTop + " · " + topN + "×") : "");
+
+    // list
+    const spreadNames = { daily: dict.dailyTitle, three: dict.threeTitle, yesno: dict.yesnoTitle, love: dict.loveTitle };
+    listEl.innerHTML = entries.map((e) => {
+      const dt = new Date(e.d + "T12:00:00");
+      const opts = { day: "numeric", month: "long" };
+      if (dt.getFullYear() !== now.getFullYear()) opts.year = "numeric";
+      const dateStr = dt.toLocaleDateString(state.lang === "tr" ? "tr-TR" : "en-US", opts);
+      const chips = e.p.map((p) =>
+        '<span class="journal-chip' + (p.r ? " rev" : "") + '" title="' + (p.r ? dict.reversed : dict.upright) + '">' +
+          TAROT_CARDS[p.c].name[state.lang] + (p.r ? " ↓" : "") +
+        "</span>").join("");
+      return '<div class="journal-row">' +
+        '<div class="journal-row-head"><span class="journal-date">' + dateStr + '</span>' +
+        '<span class="journal-spread">' + (spreadNames[e.s] || e.s) + "</span></div>" +
+        '<div class="journal-chips">' + chips + "</div></div>";
+    }).join("");
+  }
+
+  // two-step clear (no confirm() — it is blocked in sandboxed contexts)
+  let clearArmed = false;
+  $("journal-clear-btn").addEventListener("click", () => {
+    const btn = $("journal-clear-btn");
+    if (!clearArmed) {
+      clearArmed = true;
+      btn.textContent = UI[state.lang].clearConfirm;
+      setTimeout(() => {
+        clearArmed = false;
+        btn.textContent = UI[state.lang].clearJournal;
+      }, 3000);
+    } else {
+      clearArmed = false;
+      storeSet(JOURNAL_KEY, "[]");
+      renderJournal();
+      updateStreakBadge();
+    }
+  });
 
   // ── share image (1080×1920 story format) ──
   function symbolToImage(cardId) {
@@ -702,6 +822,8 @@
   $("start-btn").addEventListener("click", () => showScreen(menuScreen));
   $("back-btn").addEventListener("click", () => showScreen(menuScreen));
   $("menu-btn").addEventListener("click", () => showScreen(menuScreen));
+  $("journal-btn").addEventListener("click", () => { renderJournal(); showScreen($("journal-screen")); });
+  $("journal-back-btn").addEventListener("click", () => showScreen(menuScreen));
   $("again-btn").addEventListener("click", () => startDraw(state.spread));
   $("share-btn").addEventListener("click", shareResult);
 
@@ -720,6 +842,7 @@
   // ── init ────────────────────────────────
   applyLang();
   updateFxButton();
+  updateStreakBadge();
   gsap.from("#intro-screen .site-title", { opacity: 0, y: 24, duration: 0.9, ease: "power2.out", delay: 0.15 });
   gsap.from("#intro-screen .tagline",    { opacity: 0, y: 18, duration: 0.9, ease: "power2.out", delay: 0.35 });
   gsap.from("#intro-screen .btn-primary",{ opacity: 0, y: 14, duration: 0.9, ease: "power2.out", delay: 0.55 });

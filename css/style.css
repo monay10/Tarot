@@ -20,6 +20,8 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
+.hidden { display: none !important; }
+
 html { scroll-behavior: smooth; }
 
 body {
@@ -570,6 +572,107 @@ body::before {
 }
 
 .result-actions.hidden { display: none; }
+
+/* ── streak & journal ───────────────────── */
+.streak-badge {
+  margin-top: 20px;
+  font-size: .92rem;
+  font-weight: 600;
+  color: var(--gold-bright);
+  border: 1px solid var(--panel-border);
+  background: rgba(217, 180, 91, .08);
+  border-radius: 999px;
+  padding: 9px 20px;
+  backdrop-filter: blur(6px);
+}
+
+.journal-btn { margin-top: 34px; }
+
+.journal-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  width: 100%;
+  max-width: 680px;
+  margin-bottom: 20px;
+}
+
+.stat-tile {
+  flex: 1 1 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 14px;
+  padding: 18px 14px;
+  backdrop-filter: blur(8px);
+}
+
+.stat-big {
+  font-family: 'Cinzel', serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--gold-bright);
+  text-align: center;
+}
+
+.stat-label {
+  font-size: .72rem;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: center;
+}
+
+.journal-list {
+  width: 100%;
+  max-width: 680px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.journal-row {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 14px;
+  padding: 16px 18px;
+  backdrop-filter: blur(8px);
+}
+
+.journal-row-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.journal-date { font-family: 'Cinzel', serif; color: var(--gold-bright); font-size: .95rem; }
+.journal-spread { color: var(--muted); font-size: .8rem; letter-spacing: .05em; text-align: right; }
+
+.journal-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.journal-chip {
+  font-size: .8rem;
+  color: var(--gold);
+  border: 1px solid rgba(217, 180, 91, .35);
+  border-radius: 999px;
+  padding: 4px 12px;
+  background: rgba(217, 180, 91, .06);
+}
+
+.journal-chip.rev {
+  color: #e2a1b4;
+  border-color: rgba(226, 161, 180, .4);
+  background: rgba(226, 161, 180, .07);
+}
+
+.journal-empty { color: var(--muted); margin: 36px 0; text-align: center; }
+
+.journal-clear { margin: 28px 0 34px; font-size: .78rem; padding: 10px 26px; opacity: .8; }
 
 /* ── responsive ─────────────────────────── */
 @media (max-width: 640px) {
